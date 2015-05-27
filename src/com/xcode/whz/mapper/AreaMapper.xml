@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+  
+<mapper namespace="com.xcode.whz.mapper.AreaMapper">  
+ <resultMap type="com.xcode.whz.bean.AreaInfo" id="result_area">
+		<result property="provincecode"    column="provincecode"/>
+		<result property="provincename"  column="provincename"/>
+		<result property="citycode"   column="citycode" />
+		<result property="cityname"   column="cityname" />
+		<result property="districtcode"   column="districtcode" />
+		<result property="districtname"   column="districtname" />
+	</resultMap> 
+
+   <select id="selectProvince" parameterType="String" resultMap="result_area">
+		select provincecode,provincename from province 
+	</select>
+   <select id="selectCity" parameterType="String" resultMap="result_area">
+		select citycode,cityname from city where  provincecode=#{provincecode}
+	</select>
+   <select id="selectDistrict" parameterType="String" resultMap="result_area">
+		select districtcode,districtname from district where  citycode=#{citycode}
+	</select>
+</mapper> 

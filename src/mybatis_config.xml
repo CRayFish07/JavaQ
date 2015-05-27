@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration  
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">  
+<configuration>  
+    <properties>
+    	<property name="dialect" value="mysql"/>
+    </properties>
+    <!-- 
+    <properties resource="jdbc.properties"></properties>  
+     -->
+    <typeAliases>  
+        <typeAlias alias="User" type="com.xcode.whz.bean.User"/>  
+    </typeAliases>  
+    
+    <mappers>  
+		<mapper resource="com/xcode/whz/mapper/UserMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/CustMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/EntrustMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/AreaMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/RegisterMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/FuckMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/SeqMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/FuckMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/SystemMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/ProductMapper.xml"/>
+		<mapper resource="com/xcode/whz/mapper/PayDetailMapper.xml"/>
+			<mapper resource="com/xcode/whz/mapper/PayinfoMapper.xml"/>
+	</mappers>
+</configuration>  

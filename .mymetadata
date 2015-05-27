@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="JavaQ"
+  id="myeclipse.1404144714957"
+  context-root="/JavaQ"
+  j2ee-spec="5.0"
+  archive="JavaQ.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebContent" />
+  </attributes>
+</project-module>
+

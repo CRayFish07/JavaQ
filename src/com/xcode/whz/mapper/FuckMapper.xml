@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+  
+<mapper namespace="com.xcode.whz.mapper.FuckMapper">  
+ <resultMap type="com.xcode.whz.bean.FuckInfo" id="result_fuck">
+		<result property="entrustid"    column="entrustid"/>
+		<result property="fuckenc"  column="fuckenc"/>
+		<result property="md5ens"   column="md5ens" />
+	</resultMap> 
+
+   <select id="selectFuck" parameterType="String" resultMap="result_fuck">
+		select entrustid ,md5ens from fuckinfo where entrustid=#{entrustid}
+	</select>
+	<insert id="insertFuck">
+	insert into fuckinfo (entrustid, fuckenc, md5ens) values(#{entrustid}, #{fuckenc}, #{md5ens});
+	</insert>
+</mapper> 

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+  
+<mapper namespace="com.xcode.whz.mapper.CustMapper">  
+ <resultMap type="com.xcode.whz.bean.CustInfo" id="result_cust">
+		<result property="custid"    column="custid"/>
+		<result property="custname"  column="custname"/>
+		<result property="custpwd"   column="custpwd" />
+		<result property="phoneno"   column="phoneno" />
+		<result property="state"     column="state" />
+		<result property="checktype" column="checktype"/>
+		<result property="lastlogin" column="lastlogin"/>
+		<result property="email"     column="email"/>
+		<result property="sex"     column="sex"/>
+		<result property="endtime"     column="endtime"/>
+	</resultMap> 
+
+    
+   <select id="selectCust"  resultMap="result_cust">
+		select custid, custname, custpwd, phoneno, state, checktype, lastlogin, email,sex,endtime
+		 from custinfo 
+		 <where>
+		<if test="phoneno!=null and email!=null"> 
+		phoneno = #{phoneno} or email=#{email}
+		</if>
+		<if test="custid!=null and custpwd!=null">
+		custid = #{custid} and custpwd=#{custpwd}
+		 </if>
+		 <if test="custid!=null and custpwd==null">
+		custid = #{custid}
+		 </if>
+		</where>
+		
+	</select>
+	<insert id="insertCust">
+	insert into custinfo (custid, custname, custpwd, phoneno, state, checktype, lastlogin, email)
+	values(#{custid}, #{custname}, #{custpwd}, #{phoneno}, #{state}, #{checktype}, #{lastlogin}, #{email});
+	</insert>
+	
+	<update id="upCustById">
+	update custinfo
+	<set>
+	<if test="custname!=null and custname!=''">custname = #{custname},</if>
+	<if test="custpwd!=null and custpwd!=''">custpwd = #{custpwd},</if>
+	<if test="phoneno!=null and phoneno!=''">phoneno = #{phoneno},</if>
+	<if test="email!=null and email!=''">email = #{email},</if>
+	<if test="lastlogin!=null and lastlogin!=''">lastlogin = #{lastlogin},</if>
+	<if test="checktype!=null and checktype!=''">checktype = #{checktype},</if>
+	<if test="state!=null and state!=''" >state = #{state},</if>
+	<if test="sex!=null and sex!=''">sex = #{sex},</if>
+	<if test="endtime!=null and endtime!=''">endtime = #{endtime}</if>
+	</set>
+	<where>
+	custid = #{custid}
+	</where>
+	</update>
+	
+	
+	
+	<resultMap type="com.xcode.whz.bean.AddrInfo" id="result_addr">
+		<result property="addrid"    column="addrid"/>
+		<result property="provincecode"  column="provincecode"/>
+		<result property="citycode"  column="citycode"/>
+		<result property="districtcode"   column="districtcode" />
+		<result property="detailed"   column="detailed" />
+	</resultMap> 
+	<select id="selectAddr" parameterType="String" resultMap="result_addr">
+	select addrid, provincecode, citycode, districtcode, detailed from addrinfo where addrid=#{addrid}
+	</select>
+	<insert id="insertAddr">
+	INSERT INTO addrinfo (addrid,provincecode, citycode, districtcode, detailed) 
+	VALUES (#{addrid},#{provincecode},#{citycode},#{districtcode},#{detailed});
+	</insert>
+	<update id="upAddrById">
+	update addrinfo
+	<set>
+	<if test="provincecode!=null and provincecode!=''">provincecode = #{provincecode},</if>
+	<if test="citycode!=null and citycode!=''">citycode = #{citycode},</if>
+	<if test="districtcode!=null and districtcode!=''">districtcode = #{districtcode},</if>
+	<if test="detailed!=null and detailed!=''">detailed = #{detailed}</if>
+	</set>
+	<where>
+	addrid = #{addrid}
+	</where>
+	</update>
+	
+</mapper> 

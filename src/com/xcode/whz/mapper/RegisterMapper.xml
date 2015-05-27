@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+  
+<mapper namespace="com.xcode.whz.mapper.RegisterMapper">  
+ <resultMap type="com.xcode.whz.bean.Registertmp" id="result_tmp">
+		<result property="registerno"    column="registerno"/>
+		<result property="registertype"  column="registertype"/>
+		<result property="chkcode"   column="chkcode" />
+		<result property="tmpid"   column="tmpid" />
+		<result property="intime"   column="intime" />
+		<result property="state"   column="state" />
+</resultMap> 
+   <select id="selectRegistertmp" resultMap="result_tmp">
+		select registerno, registertype, chkcode ,tmpid,intime,state from registertmp where
+		 registerno=#{registerno} and registertype=#{registertype} and chkcode=#{chkcode} and state=#{state}
+	</select>
+	
+	 <insert id="insertRegistertmp">
+	insert into  registertmp(tmpid,intime,state,registerno, registertype, chkcode )
+	values(#{tmpid},#{intime},#{state},#{registerno}, #{registertype}, #{chkcode});
+	 </insert>
+	 <delete id="deleteRegistertmp">
+	 delete from registertmp where registerno=#{registerno}
+	 </delete>
+</mapper> 

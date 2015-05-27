@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+  
+<mapper namespace="com.xcode.whz.mapper.PayDetailMapper"> 
+
+<insert id="insertPayDetail">
+	INSERT INTO paydetail 
+	(payid, totalfee, productid, seller, buyer, gmtcreate, gmtpayment, gmtrefund,status,paychannel,thirdtradeno)
+	VALUES
+	(#{payid},#{totalfee},#{productid},#{seller},#{ buyer},#{gmtcreate},#{gmtpayment},#{gmtrefund},#{status},#{paychannel},#{thirdtradeno});
+</insert>
+
+
+	<update id="updatePayDetail">
+	update paydetail
+	<set>
+	<if test="buyer!=null">buyer=#{buyer},</if>
+	<if test="gmtpayment!=null">gmtpayment=#{gmtpayment},</if>
+	<if test="gmtrefund!=null">gmtrefund=#{gmtrefund},</if>
+	<if test="thirdtradeno!=null">thirdtradeno=#{thirdtradeno},</if>
+	<if test="status!=null">status=#{status}</if>
+	</set>
+	where payid=#{payid}
+	</update>
+</mapper>

@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- 指定Spring配置文件的Schema信息 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" 
+       xmlns:task="http://www.springframework.org/schema/task"  
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.1.xsd
+            http://www.springframework.org/schema/tx
+ 			http://www.springframework.org/schema/tx/spring-tx.xsd 
+ 			http://www.springframework.org/schema/aop
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   
+			http://www.springframework.org/schema/mvc  
+        	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        	http://www.springframework.org/schema/task 
+        	http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:log4j.properties</value>
+				<value>classpath:config.properties</value>
+			</list>
+		</property>
+	</bean>
+
+    <context:annotation-config />
+     <!--添加拦截器，类级别的处理器映射 -->
+    <mvc:interceptors>  
+    <!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->  
+    <bean class="com.xcode.whz.interceptor.LoginInterceptor">
+      	<property name="nologinurl">
+			<value>${config.nologinurl}</value>
+		</property>
+    </bean>  
+    <!-- <mvc:interceptor>  
+        <mvc:mapping path="/test/number.do"/>  
+        定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的  
+        <bean class="com.xcode.whz.interceptor.LoginInterceptor"/>  
+    </mvc:interceptor>   -->
+</mvc:interceptors>  
+    
+	<!--第一种方式是在SpringMVC 的配置文件中定义MyController 的bean 对象。
+	<bean class="com.xcode.whz.controller.MyController"/>
+   第二种方式是在SpringMVC 的配置文件中告诉Spring 该到哪里去找标记为@Controller 的Controller 控制器。 -->
+    <context:component-scan base-package="com.xcode" />
+	<!-- freemarker -->
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/pages/" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">0</prop>
+				<prop key="default_encoding">UTF-8</prop>
+				<prop key="number_format">0.##########</prop>
+				<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+				<prop key="classic_compatible">true</prop><!-- 默认情况变量为null则替换为空字符串 -->
+				<prop key="template_exception_handler">ignore</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 定义数据源Bean，使用C3P0数据源实现 -->
+	<!-- 设置连接数据库的驱动、URL、用户名、密码 连接池最大连接数、最小连接数、初始连接数等参数 -->
+	<bean id="dataSource" destroy-method="close"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass">
+			<value>${jdbc.driver}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${maxPoolSize}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${minPoolSize}</value>
+		</property>
+		<property name="initialPoolSize">
+			<value>${initialPoolSize}</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>${maxIdleTime}</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>${idleConnectionTestPeriod}</value>
+		</property>
+		<property name="acquireRetryAttempts">
+			<value>${acquireRetryAttempts}</value>
+		</property>
+		<property name="breakAfterAcquireFailure">
+			<value>${breakAfterAcquireFailure}</value>
+		</property>
+		<property name="testConnectionOnCheckout">
+			<value>${testConnectionOnCheckout}</value>
+		</property>
+		<property name="properties" ref="dataSourceProperties"/>
+	</bean>
+    <bean id="dataSourceProperties" class="com.xcode.whz.datasource.PropertiesEncryptFactoryBean">  
+        <property name="properties">  
+            <props>  
+                <prop key="user">${jdbc.username}</prop>  
+                <prop key="password">${jdbc.password}</prop>  
+            </props>  
+        </property>  
+    </bean>  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis_config.xml"></property>
+	</bean>
+ <!-- ================================事务相关控制=================================================    -->
+<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource" />
+    <qualifier value="whz"/>
+</bean>
+<!-- 开启事务注解驱动 如果是"whz"的表，用@Transactional("whz")，如果是"whz2"用 @Transactional("whz2")管理事务-->
+<tx:annotation-driven transaction-manager="txManager" />
+
+  <!-- 配置当出现Exception、RuntimeException、Exception时采用对应的事务操作 
+    <tx:advice id="userTxAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="delete*" propagation="REQUIRED" read-only="false"
+                rollback-for="java.lang.Exception"  />
+            <tx:method name="insert*" propagation="REQUIRED" read-only="false"
+                rollback-for="java.lang.Exception" />
+            <tx:method name="update*" propagation="REQUIRED" read-only="false"
+                rollback-for="java.lang.Exception" />
+            <tx:method name="find*" propagation="SUPPORTS" />
+            <tx:method name="get*" propagation="SUPPORTS" />
+            <tx:method name="select*" propagation="SUPPORTS" />
+        </tx:attributes>
+    </tx:advice> 
+ 把事务控制在Service层
+     <aop:config>   
+    <aop:pointcut id="pc" expression="execution(public * com.xcode.whz.service.*.*(..))" /> 
+    <aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice" />
+  </aop:config>
+-->
+<!--排除扫描的包， 对web包中的所有类进行扫描，以完成Bean创建和自动依赖注入的功能 -->
+    <context:component-scan base-package="com.xcode.whz">
+        <context:exclude-filter type="regex" expression="com.xcode.whz.action.*"/>
+        <context:exclude-filter type="regex" expression="com.xcode.whz.service.*"/>
+    </context:component-scan> 
+    <mvc:annotation-driven/>
+    
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+        <property name="basePackage" value="com.xcode.whz.mapper"/>
+    </bean>
+
+	
+	<!-- 开启定时任务配置，spring才能识别@Scheduled注解   -->  
+	<task:annotation-driven />
+	<!-- 加载系统参数 -->
+<bean id="initManagerPostProcessor" class="com.xcode.whz.servlet.InitManagerPostProcessor"/> 
+<!-- 验证码 Google kaptcha -->
+<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<prop key="kaptcha.border">no</prop>
+						<prop key="kaptcha.border.color">105,179,90</prop>
+						<prop key="kaptcha.textproducer.font.color">red</prop>
+						<prop key="kaptcha.image.width">66</prop>
+						<prop key="kaptcha.image.height">22</prop>
+						<prop key="kaptcha.textproducer.font.size">21</prop>
+	<!-- 字母间隔 -->		<prop key="kaptcha.textproducer.char.space">1</prop>
+						<prop key="kaptcha.session.key">code</prop>
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+	<!-- 指定内容 -->		<prop key="kaptcha.textproducer.char.string">1234567890</prop>
+	<!-- 去掉干扰线 -->	<prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>
+						<prop key="kaptcha.textproducer.font.names">Arial, Courier</prop>
+	<!--	图片样式-->	<prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.ShadowGimpy</prop>
+	<!--				
+水纹com.google.code.kaptcha.impl.WaterRipple
+鱼眼com.google.code.kaptcha.impl.FishEyeGimpy
+阴影com.google.code.kaptcha.impl.ShadowGimpy -->
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+</beans>
+	

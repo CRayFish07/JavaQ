@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.xcode.whz.mapper.PayinfoMapper">
+<resultMap type="com.xcode.whz.bean.Payinfo" id="result_Payinfo">
+		<result property="payid"    column="payid"/>
+		<result property="custid"    column="custid"/>
+		<result property="starttime"    column="starttime"/>
+		<result property="endtime"    column="endtime"/>
+		<result property="paytype"    column="paytype"/>
+		<result property="paymoney"    column="paymoney"/>
+		<result property="state"    column="state"/>
+</resultMap>
+	<insert id="insertPayinfo">
+		insert into payinfo
+		(payid,custid,starttime,endtime,paytype,paymoney,state) 
+		values 
+		(#{payid}, #{custid}, #{starttime}, #{endtime}, #{paytype}, #{paymoney}, #{state});
+	</insert>
+	<delete id="deletePayinfo">
+		delete from payinfo
+		<where>
+		<if test="payid!=null and payid!=''"> and payid=#{payid}</if>
+		<if test="custid!=null and custid!=''"> and custid=#{custid}</if>
+		<if test="starttime!=null and starttime!=''"> and starttime=#{starttime}</if>
+		<if test="endtime!=null and endtime!=''"> and endtime=#{endtime}</if>
+		<if test="paytype!=null and paytype!=''"> and paytype=#{paytype}</if>
+		<if test="paymoney!=null and paymoney!=''"> and paymoney=#{paymoney}</if>
+		<if test="state!=null and state!=''"> and state=#{state}</if>
+	</where>
+	</delete>
+	<update id="updatePayinfoById">
+		update  payinfo
+		<set>
+		<if test="custid!=null and custid!=''">custid=#{custid},</if>	
+		<if test="starttime!=null and starttime!=''">starttime=#{starttime},</if>	
+		<if test="endtime!=null and endtime!=''">endtime=#{endtime},</if>	
+		<if test="paytype!=null and paytype!=''">paytype=#{paytype},</if>	
+		<if test="paymoney!=null and paymoney!=''">paymoney=#{paymoney},</if>	
+		<if test="state!=null and state!=''">state=#{state},</if>	
+	</set>
+		where payid=#{payid}
+	</update>
+	<select id="selectPayinfo"  resultMap="result_Payinfo">
+		select payid,custid,starttime,endtime,paytype,paymoney,state from payinfo
+		<where>
+		<if test="payid!=null and payid!=''"> and payid=#{payid}</if>
+		<if test="custid!=null and custid!=''"> and custid=#{custid}</if>
+		<if test="starttime!=null and starttime!=''"> and starttime=#{starttime}</if>
+		<if test="endtime!=null and endtime!=''"> and endtime=#{endtime}</if>
+		<if test="paytype!=null and paytype!=''"> and paytype=#{paytype}</if>
+		<if test="paymoney!=null and paymoney!=''"> and paymoney=#{paymoney}</if>
+		<if test="state!=null and state!=''"> and state=#{state}</if>
+		</where>
+	</select>
+	<select id="selectPayinfoById"  resultMap="result_Payinfo">
+		select payid,custid,starttime,endtime,paytype,paymoney,state from payinfo
+				where payid=#{payid}
+
+	</select>
+</mapper>
